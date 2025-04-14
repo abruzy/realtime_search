@@ -26,7 +26,6 @@
     }, 300);
   });
 
-  // Chart initialization
   let chart;
 
   function loadAnalytics() {
@@ -38,7 +37,7 @@
 
         const ctx = document.getElementById('searchChart').getContext('2d');
 
-        if (chart) chart.destroy(); // Recreate on reload
+        if (chart) chart.destroy();
 
         chart = new Chart(ctx, {
           type: 'bar',
@@ -66,21 +65,3 @@
 
   loadAnalytics();
 </script>
-
-
-<%# <script>
-  let timeout;
-  const input = document.getElementById('search-box');
-  const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
-
-  input.addEventListener('input', () => {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => {
-      fetch('/search', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
-        body: JSON.stringify({ query: input.value })
-      });
-    }, 300);
-  });
-</script> %>

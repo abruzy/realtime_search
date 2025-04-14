@@ -11,10 +11,8 @@ class SearchesController < ApplicationController
     session = SearchSession.find_or_create_by(ip_address: ip)
     Rails.cache.write("user:#{ip}:last_query", current_input, expires_in: 30.seconds)
 
-    # Add logging to ensure cache write
     Rails.logger.info "[SearchesController] Cache written: #{current_input}"
 
-    # Use Sidekiq to delay final logging
     SearchLoggerJob.set(wait: 15.seconds).perform_later(ip, current_input)
 
     head :ok
@@ -25,7 +23,6 @@ class SearchesController < ApplicationController
     queries = SearchQuery.pluck(:final_query)
     normalized = queries.map { |q| normalize_query(q) }
   
-    # Initialize fuzzy matcher with all unique queries
     matcher = FuzzyMatch.new(normalized.uniq)
   
     clustered = Hash.new(0)

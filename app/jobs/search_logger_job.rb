@@ -9,7 +9,6 @@ class SearchLoggerJob < ApplicationJob
   
     session = SearchSession.find_or_create_by(ip_address: ip)
 
-    # Avoid logging duplicate final queries
     last_query = session.search_queries.last&.final_query
     puts "LAST_QUERY #{last_query}"
     return if last_query == current_input
