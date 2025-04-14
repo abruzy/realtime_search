@@ -1,0 +1,86 @@
+<h1>Search Page</h1>
+
+<input type="text" id="search-box" placeholder="Search articles..." />
+
+<hr>
+
+<h2>Search Trends</h2>
+<canvas id="searchChart" width="400" height="200"></canvas>
+
+
+<script>
+  let timeout;
+  const input = document.getElementById('search-box');
+
+  input.addEventListener('input', () => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      fetch('/search', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
+        },
+        body: JSON.stringify({ query: input.value })
+      });
+    }, 300);
+  });
+
+  // Chart initialization
+  let chart;
+
+  function loadAnalytics() {
+    fetch('/analytics')
+      .then(res => res.json())
+      .then(data => {
+        const labels = Object.keys(data);
+        const counts = Object.values(data);
+
+        const ctx = document.getElementById('searchChart').getContext('2d');
+
+        if (chart) chart.destroy(); // Recreate on reload
+
+        chart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: 'Search Frequency',
+              data: counts,
+              backgroundColor: 'rgba(54, 162, 235, 0.5)',
+              borderColor: 'rgba(54, 162, 235, 1)',
+              borderWidth: 1
+            }]
+          },
+          options: {
+            indexAxis: 'y',
+            scales: {
+              x: {
+                beginAtZero: true
+              }
+            }
+          }
+        });
+      });
+  }
+
+  loadAnalytics();
+</script>
+
+
+<%# <script>
+  let timeout;
+  const input = document.getElementById('search-box');
+  const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+
+  input.addEventListener('input', () => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      fetch('/search', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken },
+        body: JSON.stringify({ query: input.value })
+      });
+    }, 300);
+  });
+</script> %>
