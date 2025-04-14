@@ -19,6 +19,7 @@ gem 'redis'
 gem 'redis-rails'
 gem 'redis-store'
 gem 'fuzzy_match'
+gem 'dotenv-rails'
 gem 'rspec-rails', group: [:development, :test]
 gem 'faker', group: :test
 
